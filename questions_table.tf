@@ -1,13 +1,20 @@
 resource "aws_dynamodb_table" "veet_code_questions" {
-  name           = "veet_code_questions_table"
-  billing_mode   = "PAY_PER_REQUEST"
+  name         = "veet_code_questions_table"
+  billing_mode = "PAY_PER_REQUEST"
 
   attribute {
-    name = "question_id"
+    name = "question_name"
     type = "S"
   }
 
-  hash_key = "question_id"
+  hash_key = "question_name"
+
+  attribute {
+    name = "question_solved_date"
+    type = "S"
+  }
+
+  range_key = "question_solved_date"
 
   attribute {
     name = "difficulty"
@@ -15,7 +22,7 @@ resource "aws_dynamodb_table" "veet_code_questions" {
   }
 
   attribute {
-    name = "tag"
+    name = "tags"
     type = "S"
   }
 
@@ -26,8 +33,8 @@ resource "aws_dynamodb_table" "veet_code_questions" {
   }
 
   global_secondary_index {
-    name            = "tag-index"
-    hash_key        = "tag"
+    name            = "tags-index"
+    hash_key        = "tags"
     projection_type = "ALL"
   }
 }
