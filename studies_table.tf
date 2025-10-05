@@ -17,7 +17,7 @@ resource "aws_dynamodb_table" "studies" {
     type = "N"
   }
 
-  hash_key = "study_theme"
+  hash_key  = "study_theme"
   range_key = "study_date"
 
   global_secondary_index {
