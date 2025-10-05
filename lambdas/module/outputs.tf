@@ -11,3 +11,8 @@ output "lambda_role_arn" {
 output "lambda_name" {
   value = aws_lambda_function.this.function_name
 }
+
+output "lambda_invoke_arn" {
+  description = "The invoke ARN of the Lambda function"
+  value       = aws_lambda_function.this.invoke_arn
+}
