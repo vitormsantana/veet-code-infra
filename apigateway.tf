@@ -13,7 +13,8 @@ resource "aws_api_gateway_authorizer" "cognito_auth" {
 
 resource "aws_api_gateway_deployment" "deployment" {
   depends_on = [
-    module.create_exercise_integration
+    module.create_exercise_integration,
+    module.read_exercises_integration
   ]
   rest_api_id = aws_api_gateway_rest_api.hammocker_api.id
 }
@@ -25,10 +26,19 @@ resource "aws_api_gateway_stage" "dev" {
 }
 
 module "create_exercise_integration" {
-  source        = "./apigateway_integrations/create_exercise"
-  rest_api_id   = aws_api_gateway_rest_api.hammocker_api.id
-  parent_id     = aws_api_gateway_rest_api.hammocker_api.root_resource_id
+  source            = "./apigateway_integrations/create_exercise"
+  rest_api_id       = aws_api_gateway_rest_api.hammocker_api.id
+  parent_id         = aws_api_gateway_rest_api.hammocker_api.root_resource_id
   authorizer_id     = aws_api_gateway_authorizer.cognito_auth.id
   lambda_name       = module.lambda_add_questions_to_dynamo.lambda_function_name
   lambda_invoke_arn = module.lambda_add_questions_to_dynamo.lambda_invoke_arn
+}
+
+module "read_exercises_integration" {
+  source            = "./apigateway_integrations/read_exercises"
+  rest_api_id       = aws_api_gateway_rest_api.hammocker_api.id
+  parent_id         = aws_api_gateway_rest_api.hammocker_api.root_resource_id
+  authorizer_id     = aws_api_gateway_authorizer.cognito_auth.id
+  lambda_name       = module.lambda_read_exercises_from_dynamo.lambda_function_name
+  lambda_invoke_arn = module.lambda_read_exercises_from_dynamo.lambda_invoke_arn
 }

@@ -28,8 +28,8 @@ resource "aws_dynamodb_table" "veet_code_questions" {
   }
 
   attribute {
-    name      = "question_solved_date"
-    type      = "S"
+    name = "question_solved_date"
+    type = "S"
   }
 
   global_secondary_index {
