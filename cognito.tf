@@ -1,3 +1,13 @@
+locals {
+  google_client_id_trimmed     = trimspace(var.google_client_id)
+  google_client_secret_trimmed = trimspace(var.google_client_secret)
+  enable_google_identity_provider = (
+    length(local.google_client_id_trimmed) > 0 &&
+    length(local.google_client_secret_trimmed) > 0
+  )
+  supported_identity_providers = local.enable_google_identity_provider ? ["COGNITO", "Google"] : ["COGNITO"]
+}
+
 resource "aws_cognito_user_pool" "veet_code_user_pool" {
   name = "veet-code-user-pool"
 
@@ -35,11 +45,26 @@ resource "aws_cognito_user_pool_client" "veet_code_app_client" {
   generate_secret               = false
   prevent_user_existence_errors = "ENABLED"
 
+  allowed_oauth_flows_user_pool_client = true
+  allowed_oauth_flows                  = ["code"]
+  allowed_oauth_scopes                 = ["email", "openid", "profile"]
+  supported_identity_providers         = local.supported_identity_providers
+
+  callback_urls = [
+    "http://localhost:4200/login"
+  ]
+
+  logout_urls = [
+    "http://localhost:4200"
+  ]
+
   explicit_auth_flows = [
     "ALLOW_USER_PASSWORD_AUTH",
     "ALLOW_REFRESH_TOKEN_AUTH",
     "ALLOW_USER_SRP_AUTH"
   ]
+
+  depends_on = [aws_cognito_identity_provider.google]
 }
 
 resource "aws_cognito_identity_pool" "veet_code_identity_pool" {
@@ -52,3 +77,24 @@ resource "aws_cognito_identity_pool" "veet_code_identity_pool" {
   }
 }
 
+resource "aws_cognito_user_pool_domain" "veet_code_user_pool_domain" {
+  domain       = "hammocker-domain"
+  user_pool_id = aws_cognito_user_pool.veet_code_user_pool.id
+}
+
+resource "aws_cognito_identity_provider" "google" {
+  count         = local.enable_google_identity_provider ? 1 : 0
+  user_pool_id  = aws_cognito_user_pool.veet_code_user_pool.id
+  provider_name = "Google"
+  provider_type = "Google"
+
+  provider_details = {
+    client_id        = var.google_client_id
+    client_secret    = var.google_client_secret
+    authorize_scopes = "email openid profile"
+  }
+
+  attribute_mapping = {
+    email = "email"
+  }
+}

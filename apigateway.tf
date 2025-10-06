@@ -12,12 +12,16 @@ resource "aws_api_gateway_authorizer" "cognito_auth" {
 }
 
 resource "aws_api_gateway_deployment" "deployment" {
+  lifecycle {
+    create_before_destroy = true
+  }
   depends_on = [
     module.create_exercise_integration,
-    module.read_exercises_integration
+    module.read_exercises_integration,
   ]
   rest_api_id = aws_api_gateway_rest_api.hammocker_api.id
 }
+
 
 resource "aws_api_gateway_stage" "dev" {
   stage_name    = "dev"
