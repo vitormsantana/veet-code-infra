@@ -16,3 +16,4 @@ crash.log
 # Sensitive files (add only if you use them locally)
 .env
 *.pem
+client_secret_*.json
