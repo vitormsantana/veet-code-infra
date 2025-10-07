@@ -87,3 +87,16 @@ resource "aws_lambda_permission" "api_gateway" {
   principal     = "apigateway.amazonaws.com"
   source_arn    = "arn:aws:execute-api:sa-east-1:149536475122:${var.rest_api_id}/*/*/create_exercise"
 }
+
+output "deployment_trigger" {
+  value = sha1(jsonencode({
+    resource     = aws_api_gateway_resource.create_exercise.id
+    methods      = [aws_api_gateway_method.post.id, aws_api_gateway_method.options.id]
+    integrations = [aws_api_gateway_integration.post.id, aws_api_gateway_integration.options.id]
+    responses    = [
+      aws_api_gateway_method_response.options.id,
+      aws_api_gateway_integration_response.options.id,
+    ]
+    permission   = aws_lambda_permission.api_gateway.id
+  }))
+}

@@ -20,7 +20,7 @@ module "lambda_read_exercises_from_dynamo" {
   }
 }
 
-  module "lambda_read_statistics_from_exercises_table" {
+module "lambda_read_statistics_from_exercises_table" {
   source          = "./lambdas/module"
   lambda_name     = "lambda_read_statistics_from_exercises_table"
   zip_file        = "${path.module}/lambdas/lambda_read_statistics_from_exercises_table/lambda_read_statistics_from_exercises_table.zip"

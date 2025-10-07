@@ -20,6 +20,13 @@ resource "aws_api_gateway_deployment" "deployment" {
     module.read_exercises_integration,
     module.read_statistics_from_exercises_integration,
   ]
+  triggers = {
+    redeployment = sha1(jsonencode([
+      module.create_exercise_integration.deployment_trigger,
+      module.read_exercises_integration.deployment_trigger,
+      module.read_statistics_from_exercises_integration.deployment_trigger,
+    ]))
+  }
   rest_api_id = aws_api_gateway_rest_api.hammocker_api.id
 }
 
