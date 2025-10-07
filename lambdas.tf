@@ -19,3 +19,14 @@ module "lambda_read_exercises_from_dynamo" {
     DYNAMODB_TABLE = "veet_code_questions_table"
   }
 }
+
+  module "lambda_read_statistics_from_exercises_table" {
+  source          = "./lambdas/module"
+  lambda_name     = "lambda_read_statistics_from_exercises_table"
+  zip_file        = "${path.module}/lambdas/lambda_read_statistics_from_exercises_table/lambda_read_statistics_from_exercises_table.zip"
+  lambda_role_arn = aws_iam_role.lambda_exec.arn
+
+  env_vars = {
+    DYNAMODB_TABLE = "veet_code_questions_table"
+  }
+}
