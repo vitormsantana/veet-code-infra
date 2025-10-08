@@ -2,6 +2,7 @@
 *.tfstate
 *.tfstate.backup
 *.tfvars
+openai.auto.tfvars
 
 # Crash log files
 crash.log

@@ -10,3 +10,10 @@ variable "google_client_secret" {
   default     = ""
   sensitive   = true
 }
+
+variable "openai_api_key" {
+  description = "API key used by the OpenAI powered recommendation lambda."
+  type        = string
+  default     = ""
+  sensitive   = true
+}

@@ -19,12 +19,14 @@ resource "aws_api_gateway_deployment" "deployment" {
     module.create_exercise_integration,
     module.read_exercises_integration,
     module.read_statistics_from_exercises_integration,
+    module.read_openai_questions_recommendations_integration,
   ]
   triggers = {
     redeployment = sha1(jsonencode([
       module.create_exercise_integration.deployment_trigger,
       module.read_exercises_integration.deployment_trigger,
       module.read_statistics_from_exercises_integration.deployment_trigger,
+      module.read_openai_questions_recommendations_integration.deployment_trigger,
     ]))
   }
   rest_api_id = aws_api_gateway_rest_api.hammocker_api.id
@@ -107,4 +109,14 @@ module "read_statistics_from_exercises_integration" {
   authorizer_id     = aws_api_gateway_authorizer.cognito_auth.id
   lambda_name       = module.lambda_read_statistics_from_exercises_table.lambda_function_name
   lambda_invoke_arn = module.lambda_read_statistics_from_exercises_table.lambda_invoke_arn
+}
+
+
+module "read_openai_questions_recommendations_integration" {
+  source            = "./apigateway_integrations/read_openai_questions_recommendations"
+  rest_api_id       = aws_api_gateway_rest_api.hammocker_api.id
+  parent_id         = aws_api_gateway_rest_api.hammocker_api.root_resource_id
+  authorizer_id     = aws_api_gateway_authorizer.cognito_auth.id
+  lambda_name       = module.lambda_read_openai_questions_recomendations.lambda_function_name
+  lambda_invoke_arn = module.lambda_read_openai_questions_recomendations.lambda_invoke_arn
 }

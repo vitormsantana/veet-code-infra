@@ -17,3 +17,15 @@ variable "env_vars" {
 variable "lambda_role_arn" {
   type = string
 }
+
+variable "memory_size" {
+  description = "Amount of memory in MB for the Lambda function"
+  type        = number
+  default     = 256
+}
+
+variable "timeout" {
+  description = "Function execution timeout in seconds"
+  type        = number
+  default     = 25
+}
