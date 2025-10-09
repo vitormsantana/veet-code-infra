@@ -37,7 +37,12 @@ resource "aws_iam_role_policy" "lambda_dynamodb_access" {
           "dynamodb:Query",
           "dynamodb:Scan"
         ]
-        Resource = "arn:aws:dynamodb:sa-east-1:${data.aws_caller_identity.current.account_id}:table/veet_code_questions_table"
+        Resource = [
+          "arn:aws:dynamodb:sa-east-1:${data.aws_caller_identity.current.account_id}:table/veet_code_questions_table",
+          "arn:aws:dynamodb:sa-east-1:${data.aws_caller_identity.current.account_id}:table/veet_code_questions_table/index/*",
+          "arn:aws:dynamodb:sa-east-1:${data.aws_caller_identity.current.account_id}:table/hammocker_user_profiles_table",
+          "arn:aws:dynamodb:sa-east-1:${data.aws_caller_identity.current.account_id}:table/hammocker_user_profiles_table/index/*"
+        ]
       }
     ]
   })

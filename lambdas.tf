@@ -42,3 +42,15 @@ module "lambda_read_openai_questions_recomendations" {
     OPENAI_API_KEY = var.openai_api_key
   }
 }
+
+module "lambda_add_profile_infos" {
+  source          = "./lambdas/module"
+  lambda_name     = "lambda_add_profile_infos"
+  zip_file        = "${path.module}/lambdas/lambda_add_profile_infos/lambda_add_profile_infos.zip"
+  lambda_role_arn = aws_iam_role.lambda_exec.arn
+
+  env_vars = {
+    DYNAMODB_TABLE = "hammocker_user_profiles_table"
+    OPENAI_API_KEY = var.openai_api_key
+  }
+}
