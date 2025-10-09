@@ -25,6 +25,8 @@ resource "aws_lambda_function" "this" {
   runtime          = "provided.al2"
   filename         = var.zip_file
   source_code_hash = filebase64sha256(var.zip_file)
+  memory_size      = var.memory_size
+  timeout          = var.timeout
 
   environment {
     variables = var.env_vars
