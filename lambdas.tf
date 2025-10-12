@@ -64,3 +64,18 @@ module "lambda_read_profile_infos" {
     DYNAMODB_TABLE = "hammocker_user_profiles_table"
   }
 }
+
+module "lambda_add_user_metrics" {
+  source          = "./lambdas/module"
+  lambda_name     = "lambda_add_user_metrics"
+  zip_file        = "${path.module}/lambdas/lambda_add_user_metrics/lambda_add_user_metrics.zip"
+  lambda_role_arn = aws_iam_role.lambda_exec.arn
+ }
+
+
+module "lambda_read_metrics_from_users" {
+  source          = "./lambdas/module"
+  lambda_name     = "lambda_read_metrics_from_users"
+  zip_file        = "${path.module}/lambdas/lambda_read_metrics_from_users/lambda_read_metrics_from_users.zip"
+  lambda_role_arn = aws_iam_role.lambda_exec.arn
+ }
