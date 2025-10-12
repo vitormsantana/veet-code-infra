@@ -51,6 +51,16 @@ module "lambda_add_profile_infos" {
 
   env_vars = {
     DYNAMODB_TABLE = "hammocker_user_profiles_table"
-    OPENAI_API_KEY = var.openai_api_key
+  }
+}
+
+module "lambda_read_profile_infos" {
+  source          = "./lambdas/module"
+  lambda_name     = "lambda_read_profile_infos"
+  zip_file        = "${path.module}/lambdas/lambda_read_profile_infos/lambda_read_profile_infos.zip"
+  lambda_role_arn = aws_iam_role.lambda_exec.arn
+
+  env_vars = {
+    DYNAMODB_TABLE = "hammocker_user_profiles_table"
   }
 }

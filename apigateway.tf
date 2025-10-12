@@ -21,6 +21,7 @@ resource "aws_api_gateway_deployment" "deployment" {
     module.read_statistics_from_exercises_integration,
     module.read_openai_questions_recommendations_integration,
     module.create_user_profile_integration,
+    module.read_user_profile_integration,
   ]
   triggers = {
     redeployment = sha1(jsonencode([
@@ -130,4 +131,14 @@ module "create_user_profile_integration" {
   authorizer_id     = aws_api_gateway_authorizer.cognito_auth.id
   lambda_name       = module.lambda_add_profile_infos.lambda_function_name
   lambda_invoke_arn = module.lambda_add_profile_infos.lambda_invoke_arn
+}
+
+
+module "read_user_profile_integration" {
+  source            = "./apigateway_integrations/read_user_profile"
+  rest_api_id       = aws_api_gateway_rest_api.hammocker_api.id
+  parent_id         = aws_api_gateway_rest_api.hammocker_api.root_resource_id
+  authorizer_id     = aws_api_gateway_authorizer.cognito_auth.id
+  lambda_name       = module.lambda_read_profile_infos.lambda_function_name
+  lambda_invoke_arn = module.lambda_read_profile_infos.lambda_invoke_arn
 }
