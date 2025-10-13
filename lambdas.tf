@@ -79,3 +79,11 @@ module "lambda_read_metrics_from_users" {
   zip_file        = "${path.module}/lambdas/lambda_read_metrics_from_users/lambda_read_metrics_from_users.zip"
   lambda_role_arn = aws_iam_role.lambda_exec.arn
  }
+
+
+module "lambda_add_feedback_for_recomendation" {
+  source          = "./lambdas/module"
+  lambda_name     = "add_feedback_for_recomendation"
+  zip_file        = "${path.module}/lambdas/add_feedback_for_recomendation/add_feedback_for_recomendation.zip"
+  lambda_role_arn = aws_iam_role.lambda_exec.arn
+  }

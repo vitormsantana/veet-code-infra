@@ -12,8 +12,19 @@ resource "aws_dynamodb_table" "hammocker_user_metrics" {
     type = "S"
   }
 
+  attribute {
+    name = "metric_id"
+    type = "S"
+  }
+
   hash_key  = "user_id"
   range_key = "date"
+
+  global_secondary_index {
+    name            = "metric-id-index"
+    hash_key        = "metric_id"
+    projection_type = "ALL"
+  }
 
   tags = {
     Project = "Hammocker"
