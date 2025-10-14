@@ -7,7 +7,13 @@ resource "aws_dynamodb_table" "hammocker_user_feedback" {
     type = "S"
   }
 
+  attribute {
+    name = "feedback_timestamp"
+    type = "S"
+  }
+
   hash_key = "feedback_id"
+  range_key = "feedback_timestamp"
 
   attribute {
     name = "user_id"

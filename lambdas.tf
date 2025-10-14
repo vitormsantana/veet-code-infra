@@ -86,4 +86,8 @@ module "lambda_add_feedback_for_recomendation" {
   lambda_name     = "add_feedback_for_recomendation"
   zip_file        = "${path.module}/lambdas/add_feedback_for_recomendation/add_feedback_for_recomendation.zip"
   lambda_role_arn = aws_iam_role.lambda_exec.arn
+  env_vars = {
+    OPENAI_API_KEY = var.openai_api_key
   }
+  }
+
