@@ -1,0 +1,494 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {"type": "grafana-athena-datasource", "uid": "athena"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+    "reduceOptions": {
+      "calcs": [
+        "lastNotNull"
+      ],
+      "fields": "",
+      "values": true
+    },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "connectionArgs": {
+            "region": "sa-east-1",
+            "catalog": "AwsDataCatalog",
+            "database": "frontend_events",
+            "workgroup": "primary"
+          },
+          "rawSQL": "SELECT count(*) AS total_events\nFROM frontend_events.analytics_events;",
+          "refId": "A"
+        }
+      ],
+      "title": "Total Events (Time Range)",
+      "type": "stat"
+    },
+    {
+      "datasource": {"type": "grafana-athena-datasource", "uid": "athena"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "connectionArgs": {
+            "region": "sa-east-1",
+            "catalog": "AwsDataCatalog",
+            "database": "frontend_events",
+            "workgroup": "primary"
+          },
+          "rawSQL": "SELECT count(*) AS invalid_button_click_with_api\nFROM frontend_events.analytics_events\nWHERE eventtype = 'button_click'\n  AND (\n    apiname IS NOT NULL OR\n    apiendpoint IS NOT NULL OR\n    apimethod IS NOT NULL OR\n    apistatuscode IS NOT NULL OR\n    apioutcome IS NOT NULL\n  );",
+          "refId": "A"
+        }
+      ],
+      "title": "Invalid button_click With API Fields",
+      "type": "stat"
+    },
+    {
+      "datasource": {"type": "grafana-athena-datasource", "uid": "athena"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 25,
+            "lineWidth": 2,
+            "pointSize": 4,
+            "showPoints": "never",
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 0
+      },
+      "id": 3,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "connectionArgs": {
+            "region": "sa-east-1",
+            "catalog": "AwsDataCatalog",
+            "database": "frontend_events",
+            "workgroup": "primary"
+          },
+          "rawSQL": "WITH events AS (\n  SELECT\n    coalesce(\n      try(from_iso8601_timestamp(eventtimestamp)),\n      try(from_iso8601_timestamp(ingestiontimestamp))\n    ) AS ts\n  FROM frontend_events.analytics_events\n)\nSELECT\n  date_trunc('day', ts) AS time,\n  CAST(count(*) AS DOUBLE) AS events\nFROM events\nWHERE ts IS NOT NULL\nGROUP BY 1\nORDER BY 1;",
+          "refId": "A"
+        }
+      ],
+      "title": "Events (Daily)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "grafana-athena-datasource", "uid": "athena"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 35,
+            "lineWidth": 1,
+            "pointSize": 4,
+            "showPoints": "never",
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 8
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "connectionArgs": {
+            "region": "sa-east-1",
+            "catalog": "AwsDataCatalog",
+            "database": "frontend_events",
+            "workgroup": "primary"
+          },
+          "rawSQL": "WITH events AS (\n  SELECT\n    coalesce(\n      try(from_iso8601_timestamp(eventtimestamp)),\n      try(from_iso8601_timestamp(ingestiontimestamp))\n    ) AS ts,\n    eventtype\n  FROM frontend_events.analytics_events\n)\nSELECT\n  date_trunc('day', ts) AS time,\n  eventtype AS metric,\n  CAST(count(*) AS DOUBLE) AS events\nFROM events\nWHERE ts IS NOT NULL\nGROUP BY 1, 2\nORDER BY 1;",
+          "refId": "A"
+        }
+      ],
+      "title": "Events By Type (Daily)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "grafana-athena-datasource", "uid": "athena"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 8
+      },
+      "id": 5,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.85,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "displayMode": "hidden",
+          "placement": "bottom"
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "connectionArgs": {
+            "region": "sa-east-1",
+            "catalog": "AwsDataCatalog",
+            "database": "frontend_events",
+            "workgroup": "primary"
+          },
+          "rawSQL": "WITH events AS (\n  SELECT\n    coalesce(\n      try(from_iso8601_timestamp(eventtimestamp)),\n      try(from_iso8601_timestamp(ingestiontimestamp))\n    ) AS ts,\n    page\n  FROM frontend_events.analytics_events\n  WHERE eventtype = 'page_access'\n    AND page IS NOT NULL\n    AND length(trim(page)) > 0\n)\nSELECT\n  page,\n  CAST(count(*) AS DOUBLE) AS total\nFROM events\nWHERE ts IS NOT NULL\n  AND ts BETWEEN from_unixtime($__from/1000) AND from_unixtime($__to/1000)\nGROUP BY page\nORDER BY total DESC\nLIMIT 20;",
+          "refId": "A"
+        }
+      ],
+      "title": "Top Pages (Pie)",
+      "type": "piechart"
+    },
+    {
+      "datasource": {"type": "grafana-athena-datasource", "uid": "athena"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 70,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 8
+      },
+      "id": 6,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.85,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "orientation": "horizontal",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xField": "apiname",
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "targets": [
+        {
+          "connectionArgs": {
+            "region": "sa-east-1",
+            "catalog": "AwsDataCatalog",
+            "database": "frontend_events",
+            "workgroup": "primary"
+          },
+          "rawSQL": "SELECT\n  apiname,\n  CAST(sum(CASE WHEN apioutcome = 'success' THEN 1 ELSE 0 END) AS DOUBLE) AS success,\n  CAST(sum(CASE WHEN apioutcome <> 'success' OR apioutcome IS NULL THEN 1 ELSE 0 END) AS DOUBLE) AS error\nFROM frontend_events.analytics_events\nWHERE eventtype = 'api_call'\nGROUP BY apiname\nORDER BY (\n  sum(CASE WHEN apioutcome = 'success' THEN 1 ELSE 0 END) +\n  sum(CASE WHEN apioutcome <> 'success' OR apioutcome IS NULL THEN 1 ELSE 0 END)\n) DESC\nLIMIT 15;",
+          "refId": "A"
+        }
+      ],
+      "title": "API Outcomes By API (Bar)",
+      "type": "barchart"
+    },
+    {
+      "datasource": {"type": "grafana-athena-datasource", "uid": "athena"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 16
+      },
+      "id": 7,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "displayLabels": ["name", "percent"],
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": ["sum"],
+          "fields": "/^value$/",
+          "values": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "connectionArgs": {
+            "region": "sa-east-1",
+            "catalog": "AwsDataCatalog",
+            "database": "frontend_events",
+            "workgroup": "primary"
+          },
+          "rawSQL": "WITH events AS (\n  SELECT\n    coalesce(\n      try(from_iso8601_timestamp(eventtimestamp)),\n      try(from_iso8601_timestamp(ingestiontimestamp))\n    ) AS ts,\n    feature\n  FROM frontend_events.analytics_events\n  WHERE feature IS NOT NULL AND length(trim(feature)) > 0\n)\nSELECT\n  feature AS label,\n  CAST(count(*) AS DOUBLE) AS value\nFROM events\nWHERE ts IS NOT NULL\n  AND ts BETWEEN from_unixtime($__from/1000) AND from_unixtime($__to/1000)\nGROUP BY feature\nORDER BY value DESC\nLIMIT 20;",
+          "refId": "A"
+        }
+      ],
+      "title": "Top Features (Pie)",
+      "type": "piechart"
+    },
+    {
+      "datasource": {"type": "grafana-athena-datasource", "uid": "athena"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 25,
+            "lineWidth": 2,
+            "pointSize": 4,
+            "showPoints": "never",
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 16
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "connectionArgs": {
+            "region": "sa-east-1",
+            "catalog": "AwsDataCatalog",
+            "database": "frontend_events",
+            "workgroup": "primary"
+          },
+          "rawSQL": "WITH events AS (\n  SELECT\n    coalesce(\n      try(from_iso8601_timestamp(eventtimestamp)),\n      try(from_iso8601_timestamp(ingestiontimestamp))\n    ) AS ts,\n    eventtype,\n    apiname,\n    apiendpoint,\n    apimethod,\n    apistatuscode,\n    apioutcome\n  FROM frontend_events.analytics_events\n), daily AS (\n  SELECT\n    date_trunc('day', ts) AS time,\n    sum(CASE WHEN eventtype = 'button_click' THEN 1 ELSE 0 END) AS total_clicks,\n    sum(CASE WHEN eventtype = 'button_click' AND (\n      apiname IS NOT NULL OR\n      apiendpoint IS NOT NULL OR\n      apimethod IS NOT NULL OR\n      apistatuscode IS NOT NULL OR\n      apioutcome IS NOT NULL\n    ) THEN 1 ELSE 0 END) AS invalid_clicks\n  FROM events\n  WHERE ts IS NOT NULL\n  GROUP BY 1\n)\nSELECT\n  time,\n  CAST(invalid_clicks AS DOUBLE) AS invalid_clicks,\n  CAST(CASE\n    WHEN total_clicks = 0 THEN 0.0\n    ELSE (invalid_clicks * 100.0) / total_clicks\n  END AS DOUBLE) AS invalid_rate_pct\nFROM daily\nORDER BY time;",
+          "refId": "A"
+        }
+      ],
+      "title": "Invalid button_click (Daily)",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "1m",
+  "schemaVersion": 39,
+  "style": "dark",
+  "tags": [
+    "frontend-events",
+    "athena"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-7d",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Frontend Events Overview",
+  "uid": "frontend-events-overview",
+  "version": 1,
+  "weekStart": ""
+}

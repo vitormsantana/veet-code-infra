@@ -1,0 +1,210 @@
+{
+  "uid": "read-metrics-local",
+  "title": "Questions Page: Read User Metrics (Local)",
+  "timezone": "browser",
+  "schemaVersion": 40,
+  "version": 9,
+  "refresh": "5s",
+  "tags": [
+    "observability",
+    "local",
+    "questions",
+    "dynamodb"
+  ],
+  "panels": [
+    {
+      "type": "text",
+      "title": "How This Dashboard Gets Data",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 4
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "This dashboard shows metrics from the local adapter for the **/dev/read_user_metrics** endpoint and stage metrics for DynamoDB + processing.\n\nTo generate data: open **http://localhost:4200/questions** with local obs enabled (`localStorage.VEET_LOCAL_OBS=1`).\n\nTraces: copy `X-Local-Trace-Id` from the browser console and use **Explore -> Tempo -> Import trace** to see nested spans like `dynamodb.fetch_metrics`."
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "RPS (total, 1m)",
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 12,
+        "h": 7
+      },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum(rate(invocations_total{job=\"read_metrics_from_users_local\"}[1m]))",
+          "legendFormat": "rps"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "RPS (by Result, 1m)",
+      "gridPos": {
+        "x": 12,
+        "y": 4,
+        "w": 12,
+        "h": 7
+      },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum by (result) (rate(invocations_total{job=\"read_metrics_from_users_local\"}[1m]))",
+          "legendFormat": "{{result}}"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Error Rate (% of requests, 1m)",
+      "gridPos": {
+        "x": 0,
+        "y": 11,
+        "w": 12,
+        "h": 7
+      },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "100 * (sum(rate(invocations_total{job=\"read_metrics_from_users_local\",result=\"error\"}[1m])) / clamp_min(sum(rate(invocations_total{job=\"read_metrics_from_users_local\"}[1m])), 0.000001))",
+          "legendFormat": "error_%"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Avg Latency (ms, 1m window)",
+      "gridPos": {
+        "x": 12,
+        "y": 11,
+        "w": 12,
+        "h": 7
+      },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "rate(latency_ms_sum{job=\"read_metrics_from_users_local\"}[1m]) / clamp_min(rate(latency_ms_count{job=\"read_metrics_from_users_local\"}[1m]), 0.000001)",
+          "legendFormat": "avg_latency_ms"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "DynamoDB: Last Query Latency (ms)",
+      "gridPos": {
+        "x": 0,
+        "y": 18,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "dynamodb_fetch_latency_ms_last{job=\"read_metrics_from_users_local\",result=\"success\"}",
+          "legendFormat": "last_db_ms"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Processing: Last JSON Marshal Latency (ms)",
+      "gridPos": {
+        "x": 12,
+        "y": 18,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "json_marshal_latency_ms_last",
+          "legendFormat": "last_marshal_ms"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "DynamoDB: Avg Query Latency (ms, 5m; needs traffic)",
+      "gridPos": {
+        "x": 0,
+        "y": 26,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "increase(dynamodb_fetch_latency_ms_sum{job=\"read_metrics_from_users_local\",result=\"success\"}[5m]) / clamp_min(increase(dynamodb_fetch_latency_ms_count{job=\"read_metrics_from_users_local\",result=\"success\"}[5m]), 0.000001)",
+          "legendFormat": "avg_db_ms_5m"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Items Fetched: Last Value",
+      "gridPos": {
+        "x": 12,
+        "y": 26,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "dynamodb_items_fetched_last",
+          "legendFormat": "items_last"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "DynamoDB: Errors (per 5m)",
+      "gridPos": {
+        "x": 0,
+        "y": 34,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum(increase(dynamodb_fetch_errors_total{job=\"read_metrics_from_users_local\"}[5m]))",
+          "legendFormat": "db_errors_per_5m"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Processing: Avg JSON Marshal Latency (ms, 5m; needs traffic)",
+      "gridPos": {
+        "x": 12,
+        "y": 34,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "increase(json_marshal_latency_ms_sum{job=\"read_metrics_from_users_local\"}[5m]) / clamp_min(increase(json_marshal_latency_ms_count{job=\"read_metrics_from_users_local\"}[5m]), 0.000001)",
+          "legendFormat": "avg_marshal_ms_5m"
+        }
+      ]
+    }
+  ]
+}

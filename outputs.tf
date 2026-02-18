@@ -26,3 +26,18 @@ output "cognito_user_pool_domain" {
     data.aws_region.current.name
   )
 }
+
+output "frontend_event_reciever_events_bucket" {
+  description = "S3 bucket used to persist frontend analytics events."
+  value       = aws_s3_bucket.frontend_events.bucket
+}
+
+output "frontend_event_reciever_endpoint" {
+  description = "API Gateway endpoint for frontend_event_reciever ingestion."
+  value = format(
+    "https://%s.execute-api.%s.amazonaws.com/%s/frontend_event_reciever",
+    aws_api_gateway_rest_api.hammocker_api.id,
+    data.aws_region.current.name,
+    aws_api_gateway_stage.dev.stage_name
+  )
+}

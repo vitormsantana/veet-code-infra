@@ -47,3 +47,48 @@ resource "aws_iam_role_policy" "lambda_dynamodb_access" {
     ]
   })
 }
+
+resource "aws_iam_role_policy" "lambda_render_card_s3_access" {
+  name = "veet-code-lambda-render-card-s3-access"
+  role = aws_iam_role.lambda_exec.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:PutObject",
+          "s3:PutObjectAcl"
+        ]
+        Resource = "${aws_s3_bucket.hammocker_public.arn}/share-cards/*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "lambda_frontend_events_s3_access" {
+  name = "veet-code-lambda-frontend-events-s3-access"
+  role = aws_iam_role.lambda_exec.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:ListBucket"
+        ]
+        Resource = aws_s3_bucket.frontend_events.arn
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:PutObject",
+          "s3:GetObject"
+        ]
+        Resource = "${aws_s3_bucket.frontend_events.arn}/${var.frontend_event_reciever_events_prefix}/*"
+      }
+    ]
+  })
+}

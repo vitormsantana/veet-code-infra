@@ -25,6 +25,7 @@ resource "aws_api_gateway_deployment" "deployment" {
     module.create_user_metrics_integration,
     module.read_user_metrics_integration,
     module.create_feedback_for_recomendation_integration,
+    module.frontend_event_reciever_integration,
   ]
   triggers = {
     redeployment = sha1(jsonencode([
@@ -37,6 +38,7 @@ resource "aws_api_gateway_deployment" "deployment" {
       module.create_user_metrics_integration.deployment_trigger,
       module.read_user_metrics_integration.deployment_trigger,
       module.create_feedback_for_recomendation_integration.deployment_trigger,
+      module.frontend_event_reciever_integration.deployment_trigger,
     ]))
   }
   rest_api_id = aws_api_gateway_rest_api.hammocker_api.id
@@ -55,7 +57,7 @@ resource "aws_api_gateway_gateway_response" "default_4xx" {
 
   response_parameters = {
     "gatewayresponse.header.Access-Control-Allow-Origin"  = "'*'"
-    "gatewayresponse.header.Access-Control-Allow-Headers" = "'Content-Type,Authorization'"
+    "gatewayresponse.header.Access-Control-Allow-Headers" = "'Content-Type,Authorization,x-correlation-id,x-env,x-app-version'"
     "gatewayresponse.header.Access-Control-Allow-Methods" = "'OPTIONS,GET,POST'"
   }
 }
@@ -66,7 +68,7 @@ resource "aws_api_gateway_gateway_response" "default_5xx" {
 
   response_parameters = {
     "gatewayresponse.header.Access-Control-Allow-Origin"  = "'*'"
-    "gatewayresponse.header.Access-Control-Allow-Headers" = "'Content-Type,Authorization'"
+    "gatewayresponse.header.Access-Control-Allow-Headers" = "'Content-Type,Authorization,x-correlation-id,x-env,x-app-version'"
     "gatewayresponse.header.Access-Control-Allow-Methods" = "'OPTIONS,GET,POST'"
   }
 }
@@ -77,7 +79,7 @@ resource "aws_api_gateway_gateway_response" "unauthorized" {
 
   response_parameters = {
     "gatewayresponse.header.Access-Control-Allow-Origin"  = "'*'"
-    "gatewayresponse.header.Access-Control-Allow-Headers" = "'Content-Type,Authorization'"
+    "gatewayresponse.header.Access-Control-Allow-Headers" = "'Content-Type,Authorization,x-correlation-id,x-env,x-app-version'"
     "gatewayresponse.header.Access-Control-Allow-Methods" = "'OPTIONS,GET,POST'"
   }
 }
@@ -88,7 +90,7 @@ resource "aws_api_gateway_gateway_response" "access_denied" {
 
   response_parameters = {
     "gatewayresponse.header.Access-Control-Allow-Origin"  = "'*'"
-    "gatewayresponse.header.Access-Control-Allow-Headers" = "'Content-Type,Authorization'"
+    "gatewayresponse.header.Access-Control-Allow-Headers" = "'Content-Type,Authorization,x-correlation-id,x-env,x-app-version'"
     "gatewayresponse.header.Access-Control-Allow-Methods" = "'OPTIONS,GET,POST'"
   }
 }

@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: Frontend Events
+    orgId: 1
+    folder: Frontend Analytics
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /etc/grafana/provisioning/dashboards

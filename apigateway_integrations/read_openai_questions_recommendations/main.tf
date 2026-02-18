@@ -72,7 +72,7 @@ resource "aws_api_gateway_integration_response" "options" {
   status_code = "200"
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,Authorization'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,Authorization,x-correlation-id,x-env,x-app-version'"
     "method.response.header.Access-Control-Allow-Methods" = "'OPTIONS,POST'"
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
   }

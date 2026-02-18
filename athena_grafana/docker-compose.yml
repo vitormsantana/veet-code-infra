@@ -1,0 +1,13 @@
+services:
+  grafana:
+    image: grafana/grafana-oss:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_INSTALL_PLUGINS=grafana-athena-datasource
+      - AWS_REGION=${AWS_REGION:-sa-east-1}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_ACCOUNT_ID=${AWS_ACCOUNT_ID}
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning

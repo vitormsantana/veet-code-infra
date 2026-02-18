@@ -16,5 +16,8 @@ crash.log
 
 # Sensitive files (add only if you use them locally)
 .env
+athena_grafana/.env
+!.env.example
+!athena_grafana/.env.example
 *.pem
 client_secret_*.json

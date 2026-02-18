@@ -1,0 +1,13 @@
+apiVersion: 1
+datasources:
+  - name: Athena
+    uid: athena
+    type: grafana-athena-datasource
+    access: proxy
+    jsonData:
+      defaultRegion: ${AWS_REGION}
+      catalog: AwsDataCatalog
+      database: frontend_events
+      workgroup: primary
+      outputLocation: s3://aws-athena-query-results-${AWS_ACCOUNT_ID}-${AWS_REGION}/
+    secureJsonData: {}

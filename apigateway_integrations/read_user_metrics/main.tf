@@ -71,7 +71,7 @@ resource "aws_api_gateway_integration_response" "options" {
   status_code = "200"
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,Authorization'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,Authorization,x-correlation-id,x-env,x-app-version'"
     "method.response.header.Access-Control-Allow-Methods" = "'OPTIONS,GET'"
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
   }
@@ -92,7 +92,7 @@ output "deployment_trigger" {
     resource     = aws_api_gateway_resource.read_user_metrics.id
     methods      = [aws_api_gateway_method.get.id, aws_api_gateway_method.options.id]
     integrations = [aws_api_gateway_integration.get.id, aws_api_gateway_integration.options.id]
-    responses    = [
+    responses = [
       aws_api_gateway_method_response.options.id,
       aws_api_gateway_integration_response.options.id,
     ]
